@@ -14,8 +14,7 @@
     "url": "git@github.com:langchain-ai/langgraphjs-supervisor.git"
   },
   "scripts": {
-    "turbo:command": "turbo",
-    "build": "yarn turbo:command build:internal --filter=@langchain/langgraph-supervisor",
+    "build": "yarn turbo build:internal",
     "build:internal": "yarn clean && yarn lc_build --create-entrypoints --pre --tree-shaking",
     "clean": "rm -rf dist/ dist-cjs/ .turbo/",
     "lint:eslint": "NODE_OPTIONS=--max-old-space-size=4096 eslint --cache --ext .ts,.js src/",
@@ -34,10 +33,11 @@
   "license": "MIT",
   "dependencies": {
     "@langchain/core": "^0.3.39",
-    "@langchain/langgraph": ">=0.2.45, <0.3.0"
+    "@langchain/langgraph": "^0.2.46",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@langchain/scripts": ">=0.1.3 <0.2.0",
+    "@langchain/scripts": "^0.1.3",
     "@tsconfig/recommended": "^1.0.3",
     "prettier": "^2.8.3",
     "tsx": "^4.7.0",

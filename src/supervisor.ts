@@ -56,14 +56,13 @@ const createSupervisor = <A extends AnnotationRoot<any> = AnnotationRoot<{}>>({
   agents: CompiledStateGraph<any, any, any, any, any, any>[];
   llm: BaseChatModel;
   tools?: (StructuredToolInterface | RunnableToolLike)[];
-  // TODO: update this to use 'prompt'
-  prompt?: CreateReactAgentParams["stateModifier"];
+  prompt?: CreateReactAgentParams["prompt"];
   stateSchema?: A;
   outputMode?: OutputMode;
   addHandoffBackMessages?: boolean;
   supervisorName?: string;
 }) => {
-  const agentNames = new Set();
+  const agentNames = new Set<string>();
 
   for (const agent of agents) {
     if (!agent.name || agent.name === "LangGraph") {
@@ -87,22 +86,18 @@ const createSupervisor = <A extends AnnotationRoot<any> = AnnotationRoot<{}>>({
   );
   const allTools = [...(tools ?? []), ...(handoffTools ?? [])];
 
-  // TODO: figure out a better way to do this
-  //   if (model.bindTools && "parallelToolCalls" in model.bindTools) {
-  //     model = model.bindTools(allTools, { parallelToolCalls: false });
-  //   }
-
   const supervisorAgent = createReactAgent({
     name: supervisorName,
     llm,
     tools: allTools,
-    // TODO: update this to use 'prompt'
-    stateModifier: prompt,
+    prompt,
     stateSchema,
   });
 
   const builder = new StateGraph(stateSchema)
-    .addNode(supervisorAgent.name as string, supervisorAgent) //
+    .addNode(supervisorAgent.name as string, supervisorAgent, {
+      ends: [...agentNames],
+    })
     .addEdge(START, supervisorAgent.name as string);
 
   for (const agent of agents) {
@@ -110,6 +105,7 @@ const createSupervisor = <A extends AnnotationRoot<any> = AnnotationRoot<{}>>({
       agent.name as string,
       makeCallAgent(agent, outputMode, addHandoffBackMessages, supervisorName)
     );
+    builder.addEdge(agent.name as string, supervisorAgent.name as string);
   }
 
   return builder;
