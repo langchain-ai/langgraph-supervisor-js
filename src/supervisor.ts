@@ -6,6 +6,8 @@ import {
   StateGraph,
   CompiledStateGraph,
   AnnotationRoot,
+  StateType,
+  UpdateType,
 } from "@langchain/langgraph";
 import {
   createReactAgent,
@@ -106,7 +108,13 @@ const createSupervisor = <A extends AnnotationRoot<any> = AnnotationRoot<{}>>({
   addHandoffBackMessages = true,
   supervisorName = "supervisor",
 }: {
-  agents: CompiledStateGraph<A["State"], A["Update"], any, A["spec"], any>[];
+  agents: CompiledStateGraph<
+    StateType<A["spec"]>,
+    UpdateType<A["spec"]>,
+    string,
+    StateType<A["spec"]>,
+    StateType<A["spec"]>
+  >[];
   llm: LanguageModelLike;
   tools?: (StructuredToolInterface | RunnableToolLike)[];
   prompt?: CreateReactAgentParams["prompt"];
