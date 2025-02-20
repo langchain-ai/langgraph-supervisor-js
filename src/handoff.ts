@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 import { AIMessage, ToolMessage } from "@langchain/core/messages";
 import { tool } from "@langchain/core/tools";
 import { Command } from "@langchain/langgraph";
@@ -44,6 +45,7 @@ const createHandoffTool = ({ agentName }: { agentName: string }) => {
     },
     {
       name: toolName,
+      schema: z.object({}),
       description: "Ask another agent for help.",
     }
   );
