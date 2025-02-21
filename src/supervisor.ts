@@ -6,8 +6,6 @@ import {
   StateGraph,
   CompiledStateGraph,
   AnnotationRoot,
-  StateType,
-  UpdateType,
 } from "@langchain/langgraph";
 import {
   createReactAgent,
@@ -78,6 +76,25 @@ const makeCallAgent = (
   };
 };
 
+export type CreateSupervisorParams<
+  AnnotationRootT extends AnnotationRoot<any>
+> = {
+  agents: CompiledStateGraph<
+    AnnotationRootT["State"],
+    AnnotationRootT["Update"],
+    any,
+    AnnotationRootT["State"],
+    AnnotationRootT["spec"]
+  >[];
+  llm: LanguageModelLike;
+  tools?: (StructuredToolInterface | RunnableToolLike | DynamicTool)[];
+  prompt?: CreateReactAgentParams["prompt"];
+  stateSchema?: AnnotationRootT;
+  outputMode?: OutputMode;
+  addHandoffBackMessages?: boolean;
+  supervisorName?: string;
+};
+
 /**
  * Create a multi-agent supervisor.
  *
@@ -98,7 +115,7 @@ const makeCallAgent = (
  *   when returning control to the supervisor to indicate that a handoff has occurred
  * @param supervisorName Name of the supervisor node
  */
-const createSupervisor = <A extends AnnotationRoot<any> = AnnotationRoot<{}>>({
+const createSupervisor = <AnnotationRootT extends AnnotationRoot<any> = AnnotationRoot<{}>>({
   agents,
   llm,
   tools,
@@ -107,22 +124,7 @@ const createSupervisor = <A extends AnnotationRoot<any> = AnnotationRoot<{}>>({
   outputMode = "last_message",
   addHandoffBackMessages = true,
   supervisorName = "supervisor",
-}: {
-  agents: CompiledStateGraph<
-    StateType<A["spec"]>,
-    UpdateType<A["spec"]>,
-    string,
-    StateType<A["spec"]>,
-    StateType<A["spec"]>
-  >[];
-  llm: LanguageModelLike;
-  tools?: (StructuredToolInterface | RunnableToolLike | DynamicTool)[];
-  prompt?: CreateReactAgentParams["prompt"];
-  stateSchema?: A;
-  outputMode?: OutputMode;
-  addHandoffBackMessages?: boolean;
-  supervisorName?: string;
-}) => {
+}: CreateSupervisorParams<AnnotationRootT>) => {
   const agentNames = new Set<string>();
 
   for (const agent of agents) {
