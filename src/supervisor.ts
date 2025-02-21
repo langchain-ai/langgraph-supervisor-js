@@ -1,5 +1,5 @@
 import { LanguageModelLike } from "@langchain/core/language_models/base";
-import { StructuredToolInterface } from "@langchain/core/tools";
+import { StructuredToolInterface, DynamicTool } from "@langchain/core/tools";
 import { RunnableToolLike } from "@langchain/core/runnables";
 import {
   START,
@@ -116,7 +116,7 @@ const createSupervisor = <A extends AnnotationRoot<any> = AnnotationRoot<{}>>({
     StateType<A["spec"]>
   >[];
   llm: LanguageModelLike;
-  tools?: (StructuredToolInterface | RunnableToolLike)[];
+  tools?: (StructuredToolInterface | RunnableToolLike | DynamicTool)[];
   prompt?: CreateReactAgentParams["prompt"];
   stateSchema?: A;
   outputMode?: OutputMode;
