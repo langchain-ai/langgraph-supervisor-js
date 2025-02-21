@@ -112,7 +112,9 @@ export type CreateSupervisorParams<
  *   when returning control to the supervisor to indicate that a handoff has occurred
  * @param supervisorName Name of the supervisor node
  */
-const createSupervisor = <AnnotationRootT extends AnnotationRoot<any> = AnnotationRoot<{}>>({
+const createSupervisor = <
+  AnnotationRootT extends AnnotationRoot<any> = AnnotationRoot<{}>
+>({
   agents,
   llm,
   tools,
